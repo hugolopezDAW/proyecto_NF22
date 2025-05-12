@@ -39,9 +39,5 @@ public class controlador {
     }
     public List<contacto> buscarContactoPorEmail(String email) {
         return contacts.stream().filter(c -> c.getEmail().equalsIgnoreCase(email)).toList();
-
-        //Comentario de Joan.
-
-        //Comentario de Hugo.
     }
 }
