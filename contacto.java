@@ -52,8 +52,6 @@ public class contacto {
     public String toString() {
         return id + ": " + nombre + " " + apellido + ", " + telefono + ", " + email;
     }
-
-    //Comentario de pruebas.
 }
 
 
