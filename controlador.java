@@ -1,6 +1,6 @@
 import java.util.*;
 public class controlador {
-    protected int lastContactId = 0;
+    private int lastContactId = 0;
     private List<contacto> contacts = new ArrayList<>();
 
     public contacto nuevoContacto(String nombre, String apellido, String telefono, String email) {
