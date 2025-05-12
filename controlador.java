@@ -41,5 +41,7 @@ public class controlador {
         return contacts.stream().filter(c -> c.getEmail().equalsIgnoreCase(email)).toList();
 
         //Comentario de Joan.
+
+        //Comentario de Hugo.
     }
 }
