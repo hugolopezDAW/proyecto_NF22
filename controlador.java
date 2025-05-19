@@ -3,12 +3,12 @@ public class controlador {
     protected int lastContactId = 0;
     private List<contacto> contacts = new ArrayList<>();
 
-    public contacto nuevoContacto(String nombre, String apellido, String telefono, String email) {
+    public contacto nuevoContacto(String nombre, String apellido, int telefono, String email) {
         contacto c = new contacto(++lastContactId, nombre, apellido, telefono, email);
         contacts.add(c);
         return c;
     }
-    public contacto actualizarContacto(int id, String nombre, String apellido, String telefono, String email){
+    public contacto actualizarContacto(int id, String nombre, String apellido, int telefono, String email){
     contacto c = buscarContactoPorId(id);
         if (c != null) {
             c.setNombre(nombre);
@@ -18,8 +18,9 @@ public class controlador {
         }
         return c;
     }
-    public void borrarContacto(int id) {
+    public boolean borrarContacto(int id) {
         contacts.removeIf(c->c.getId()==id);
+        return false;
     }
     public contacto buscarContactoPorId(int id){
         for (contacto c : contacts) {
@@ -34,9 +35,13 @@ public class controlador {
     public List<contacto> buscarContactoPorApellido(String apellido) {
         return contacts.stream().filter(c -> c.getApellido().equalsIgnoreCase(apellido)).toList();
     }
-    public List<contacto> buscarContactoPorTelefono(String telefono) {
-        return contacts.stream().filter(c -> c.getTelefono().equalsIgnoreCase(telefono)).toList();
+
+    public List<contacto> buscarContactoPorTelefono(int telefono) {
+        return contacts.stream()
+                .filter(c -> c.getTelefono() == telefono)
+                .toList();
     }
+
     public List<contacto> buscarContactoPorEmail(String email) {
         return contacts.stream().filter(c -> c.getEmail().equalsIgnoreCase(email)).toList();
     }

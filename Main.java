@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
-    private static controlador controlador = new controlador();
+    private static controlador controlador = new fileController("/home/daw1/Escriptori/contactos");
     private static TUI tui = new TUI(System.in);
     public static void main(String[] args) {
         while(true) {
@@ -17,7 +17,7 @@ public class Main {
     }
     public static void crearContacto() {
         String[] datos = tui.pedirDatosNuevoContacto();
-        contacto c = controlador.nuevoContacto(datos[0], datos[1], datos[2], datos[3]);
+        contacto c = controlador.nuevoContacto(datos[0], datos[1], Integer.parseInt(datos[2]), datos[3]);
         tui.mostrarLinea(c);
     }
     public static void buscarContacto() {
@@ -27,7 +27,7 @@ public class Main {
         switch (criterio) {
             case 1 -> tui.mostrarLinea(controlador.buscarContactoPorNombre(valor).toArray());
             case 2 -> tui.mostrarLinea(controlador.buscarContactoPorApellido(valor).toArray());
-            case 3 -> tui.mostrarLinea(controlador.buscarContactoPorTelefono(valor).toArray());
+            case 3 -> tui.mostrarLinea(controlador.buscarContactoPorTelefono(Integer.parseInt(valor)).toArray());
             case 4 -> tui.mostrarLinea(controlador.buscarContactoPorEmail(valor).toArray());
         }
     }
@@ -38,7 +38,7 @@ public class Main {
     public static void actualizarContacto() {
         int id = tui.pedirIdBorrarContacto();
         String [] datos = tui.pedirDatosActualizarContacto();
-        contacto c = controlador.actualizarContacto(id, datos[0], datos[1], datos[2], datos[3]);
+        contacto c = controlador.actualizarContacto(id, datos[0], datos[1], Integer.parseInt(datos[2]), datos[3]);
         if (c != null) {
             tui.mostrarLinea(c);
         }else {
