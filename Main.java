@@ -11,6 +11,7 @@ public class Main {
                 case 2 -> buscarContacto();
                 case 3 -> borrarContacto();
                 case 4 -> actualizarContacto();
+                case 5 -> System.exit(0);
                 default -> System.out.println("Opcion no válida. ");
             }
         }

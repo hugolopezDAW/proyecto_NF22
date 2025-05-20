@@ -12,6 +12,7 @@ public class TUI {
         System.out.println("2. Buscar contacto");
         System.out.println("3. Borrar contacto");
         System.out.println("4. Actualizar contacto");
+        System.out.println("5. Exit");
         return inputStream.nextInt();
     }
 
