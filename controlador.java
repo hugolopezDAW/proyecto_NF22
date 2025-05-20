@@ -19,8 +19,7 @@ public class controlador {
         return c;
     }
     public boolean borrarContacto(int id) {
-        contacts.removeIf(c->c.getId()==id);
-        return false;
+        return contacts.removeIf(c->c.getId()==id);
     }
     public contacto buscarContactoPorId(int id){
         for (contacto c : contacts) {

@@ -13,7 +13,7 @@ public class TUI {
         System.out.println("3. Borrar contacto");
         System.out.println("4. Actualizar contacto");
         System.out.println("5. Exit");
-        return inputStream.nextInt();
+        return leerEntero();
     }
 
     public int mostrarMenuBusqueda() {
@@ -21,7 +21,7 @@ public class TUI {
         System.out.println("2. Por apellido");
         System.out.println("3. Por telefono");
         System.out.println("4. Por email");
-        return inputStream.nextInt();
+        return leerEntero();
     }
     public String[] pedirDatosNuevoContacto() {
         inputStream.nextLine(); // consume newline
@@ -54,7 +54,7 @@ public class TUI {
     }
     public int pedirIdBorrarContacto() {
         System.out.println("ID del contacto a borrar: ");
-        return inputStream.nextInt();
+        return leerEntero();
     }
     public void mostrarLinea (Object datos) {
         System.out.println(datos.toString());
@@ -64,4 +64,18 @@ public class TUI {
             System.out.println(d.toString());
         }
     }
+    public String leerLinea() {
+        inputStream.nextLine(); // limpia si es necesario
+        return inputStream.nextLine();
+    }
+    public int leerEntero() {
+        while (!inputStream.hasNextInt()) {
+            System.out.print("Por favor, introduce un número válido: ");
+            inputStream.next(); // consume la entrada incorrecta
+        }
+        int valor = inputStream.nextInt();
+        inputStream.nextLine(); // consume el salto de línea pendiente
+        return valor;
+    }
+
 }

@@ -57,15 +57,17 @@ public class fileController extends controlador {
     public contacto actualizarContacto(int id, String nombre, String apellido, int telefono, String email) {
         contacto c = super.actualizarContacto(id, nombre, apellido, telefono, email);
         File contactFile = new File(contactFolder, id + ".txt");
-
-        try (FileWriter writer = new FileWriter(contactFile)) {
-            writer.write(c.getNombre() + "\n");
-            writer.write(c.getApellido() + "\n");
-            writer.write(c.getTelefono() + "\n");
-            writer.write(c.getEmail() + "\n");
-        } catch (IOException e) {
-            System.err.println("Error actualizando contacto: " + e.getMessage());
+        if (c != null) {
+            try (FileWriter writer = new FileWriter(contactFile)) {
+                writer.write(c.getNombre() + "\n");
+                writer.write(c.getApellido() + "\n");
+                writer.write(c.getTelefono() + "\n");
+                writer.write(c.getEmail() + "\n");
+            } catch (IOException e) {
+                System.err.println("Error actualizando contacto: " + e.getMessage());
+            }
         }
+
 
         return c;
     }

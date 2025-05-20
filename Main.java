@@ -24,7 +24,7 @@ public class Main {
     public static void buscarContacto() {
         int criterio = tui.mostrarMenuBusqueda();
         System.out.println("Valor de búsqueda");
-        String valor = new Scanner(System.in).nextLine();
+        String valor = tui.leerLinea();
         switch (criterio) {
             case 1 -> tui.mostrarLinea(controlador.buscarContactoPorNombre(valor).toArray());
             case 2 -> tui.mostrarLinea(controlador.buscarContactoPorApellido(valor).toArray());
