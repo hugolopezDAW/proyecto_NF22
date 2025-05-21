@@ -1,7 +1,6 @@
 import java.util.*;
 import java.util.stream.Collectors;
-
-public class controlador {
+public class memoryController implements controlador {
     protected int lastContactId = 0;
     private Map<Integer, contacto> contacts = new HashMap<>();
 

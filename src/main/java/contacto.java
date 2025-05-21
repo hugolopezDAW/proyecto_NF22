@@ -1,4 +1,9 @@
+import jakarta.persistence.*;
+@Entity
+@Table(name = "contactes")
 public class contacto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nombre;
     private String apellido;
@@ -52,6 +57,7 @@ public class contacto {
     public String toString() {
         return id + ": " + nombre + " " + apellido + ", " + telefono + ", " + email;
     }
+
 }
 
 

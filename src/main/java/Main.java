@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
-    private static controlador controlador = new fileController("/home/daw1/Escriptori/contactos");
+    private static controlador controlador = new DataBaseController();
     private static TUI tui = new TUI(System.in);
     public static void main(String[] args) {
         while(true) {
