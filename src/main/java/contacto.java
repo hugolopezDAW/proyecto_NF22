@@ -10,6 +10,9 @@ public class contacto {
     private int telefono;
     private String email;
 
+    public contacto() {
+    }
+
     public contacto(int id, String nombre, String apellido, int telefono, String email) {
         this.id = id;
         this.nombre = nombre;

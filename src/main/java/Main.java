@@ -3,8 +3,9 @@ import java.util.Scanner;
 public class Main {
     private static controlador controlador = new DataBaseController();
     private static TUI tui = new TUI(System.in);
+
     public static void main(String[] args) {
-        while(true) {
+        while (true) {
             int opcion = tui.mostrarMenuPrincipal();
             switch (opcion) {
                 case 1 -> crearContacto();
@@ -16,11 +17,13 @@ public class Main {
             }
         }
     }
+
     public static void crearContacto() {
         String[] datos = tui.pedirDatosNuevoContacto();
         contacto c = controlador.nuevoContacto(datos[0], datos[1], Integer.parseInt(datos[2]), datos[3]);
         tui.mostrarLinea(c);
     }
+
     public static void buscarContacto() {
         int criterio = tui.mostrarMenuBusqueda();
         System.out.println("Valor de búsqueda");
@@ -32,18 +35,31 @@ public class Main {
             case 4 -> tui.mostrarLinea(controlador.buscarContactoPorEmail(valor).toArray());
         }
     }
+
     public static void borrarContacto() {
         int id = tui.pedirIdBorrarContacto();
         controlador.borrarContacto(id);
     }
+
     public static void actualizarContacto() {
         int id = tui.pedirIdBorrarContacto();
-        String [] datos = tui.pedirDatosActualizarContacto();
+
+
+        contacto existente = controlador.buscarContactoPorId(id);
+        if (existente == null) {
+            System.out.println("No se ha encontrado ningún contacto con ese ID.");
+            return;
+        }
+
+
+        String[] datos = tui.pedirDatosActualizarContacto();
         contacto c = controlador.actualizarContacto(id, datos[0], datos[1], Integer.parseInt(datos[2]), datos[3]);
+
+
         if (c != null) {
             tui.mostrarLinea(c);
-        }else {
-            System.out.println("No se ha encontrado ningun contacto con este ID");
+        } else {
+            System.out.println("Ha ocurrido un error al actualizar el contacto.");
         }
     }
 }

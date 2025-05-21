@@ -7,7 +7,7 @@
     <session-factory>
         <!-- Database connection properties -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://192.168.236.145:5432/agenda</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://10.2.17.89:5432/agenda</property>
         <!--<property name="hibernate.connection.url">jdbc:postgresql://192.168.237.197:5432/agenda</property>-->
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">postgres</property>

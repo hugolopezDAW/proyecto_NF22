@@ -93,13 +93,26 @@ public class DataBaseController implements controlador, AutoCloseable {
         CriteriaQuery<contacto> cr = this.criteriaBuilder.createQuery(contacto.class);
         Root<contacto> root = cr.from(contacto.class);
 
-        // CORREGIDO: esta línea era la línea 50 problemática
-        CriteriaQuery<contacto> query = cr.select(root).where(
-                this.criteriaBuilder.like(this.criteriaBuilder.lower(root.get(camp).as(String.class)), "%" + valor.toLowerCase() + "%")
-        );
+        CriteriaQuery<contacto> query;
+
+        if (camp.equals("telefono")) {
+            // Comparación exacta para teléfono (como número)
+            query = cr.select(root).where(
+                    this.criteriaBuilder.equal(root.get(camp), Integer.parseInt(valor))
+            );
+        } else {
+            // Búsqueda con LIKE para campos de texto (nombre, apellido, email)
+            query = cr.select(root).where(
+                    this.criteriaBuilder.like(
+                            this.criteriaBuilder.lower(root.get(camp).as(String.class)),
+                            "%" + valor.toLowerCase() + "%"
+                    )
+            );
+        }
 
         return this.session.createQuery(query).getResultList();
     }
+
 
     // (Opcional) Para obtener todos los contactos
     public List<contacto> getContactes() {

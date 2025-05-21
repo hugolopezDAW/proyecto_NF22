@@ -26,7 +26,6 @@ public class TUI {
     }
 
     public String[] pedirDatosNuevoContacto() {
-        this.inputStream.nextLine();
         System.out.print("Nombre: ");
         String nombre = this.inputStream.nextLine();
         System.out.print("Apellidos: ");
