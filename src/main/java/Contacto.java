@@ -1,7 +1,8 @@
 import jakarta.persistence.*;
+
 @Entity
 @Table(name = "contactes")
-public class contacto {
+public class Contacto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -10,15 +11,17 @@ public class contacto {
     private int telefono;
     private String email;
 
-    public contacto() {
-    }
+    public Contacto() {}
 
-    public contacto(int id, String nombre, String apellido, int telefono, String email) {
-        this.id = id;
+    public Contacto(String nombre, String apellido, int telefono, String email) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.telefono = telefono;
         this.email = email;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNombre() {
@@ -53,14 +56,8 @@ public class contacto {
         this.email = email;
     }
 
-    public int getId() {
-        return id;
-    }
     @Override
     public String toString() {
         return id + ": " + nombre + " " + apellido + ", " + telefono + ", " + email;
     }
-
 }
-
-

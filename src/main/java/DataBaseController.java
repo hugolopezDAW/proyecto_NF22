@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 import java.util.List;
 import java.util.logging.Level;
 
-public class DataBaseController implements controlador, AutoCloseable {
+public class DataBaseController implements Controlador, AutoCloseable {
     private final SessionFactory factory;
     private final Session session;
     private final CriteriaBuilder criteriaBuilder;
@@ -18,7 +18,7 @@ public class DataBaseController implements controlador, AutoCloseable {
         java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         this.factory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
         this.session = this.factory.openSession();
-        this.criteriaBuilder = this.session.getCriteriaBuilder(); // CORREGIDO (línea 17)
+        this.criteriaBuilder = this.session.getCriteriaBuilder();
     }
 
     @Override
@@ -28,8 +28,8 @@ public class DataBaseController implements controlador, AutoCloseable {
     }
 
     @Override
-    public contacto nuevoContacto(String nombre, String apellido, int telefono, String email) {
-        contacto c = new contacto(0, nombre, apellido, telefono, email); // ID lo genera Hibernate
+    public Contacto nuevoContacto(String nombre, String apellido, int telefono, String email) {
+        Contacto c = new Contacto(nombre, apellido, telefono, email);
         Transaction transaction = this.session.beginTransaction();
         this.session.persist(c);
         transaction.commit();
@@ -37,15 +37,15 @@ public class DataBaseController implements controlador, AutoCloseable {
     }
 
     @Override
-    public contacto actualizarContacto(int id, String nombre, String apellido, int telefono, String email) {
-        contacto c = this.session.get(contacto.class, id);
+    public Contacto actualizarContacto(int id, String nombre, String apellido, int telefono, String email) {
+        Contacto c = this.session.get(Contacto.class, id);
         if (c != null) {
             Transaction tx = this.session.beginTransaction();
             c.setNombre(nombre);
             c.setApellido(apellido);
             c.setTelefono(telefono);
             c.setEmail(email);
-            this.session.merge(c); // actualiza el objeto
+            this.session.merge(c);
             tx.commit();
         }
         return c;
@@ -53,7 +53,7 @@ public class DataBaseController implements controlador, AutoCloseable {
 
     @Override
     public boolean borrarContacto(int id) {
-        contacto c = this.session.get(contacto.class, id);
+        Contacto c = this.session.get(Contacto.class, id);
         if (c != null) {
             Transaction tx = this.session.beginTransaction();
             this.session.remove(c);
@@ -64,47 +64,44 @@ public class DataBaseController implements controlador, AutoCloseable {
     }
 
     @Override
-    public contacto buscarContactoPorId(int id) {
-        return this.session.get(contacto.class, id);
+    public Contacto buscarContactoPorId(int id) {
+        return this.session.get(Contacto.class, id);
     }
 
     @Override
-    public List<contacto> buscarContactoPorNombre(String nombre) {
-        return cercarContactesPerCamp("nombre", nombre);
+    public List<Contacto> buscarContactoPorNombre(String nombre) {
+        return buscarContactosPorCampo("nombre", nombre);
     }
 
     @Override
-    public List<contacto> buscarContactoPorApellido(String apellido) {
-        return cercarContactesPerCamp("apellido", apellido);
+    public List<Contacto> buscarContactoPorApellido(String apellido) {
+        return buscarContactosPorCampo("apellido", apellido);
     }
 
     @Override
-    public List<contacto> buscarContactoPorTelefono(int telefono) {
-        return cercarContactesPerCamp("telefono", String.valueOf(telefono));
+    public List<Contacto> buscarContactoPorTelefono(int telefono) {
+        return buscarContactosPorCampo("telefono", String.valueOf(telefono));
     }
 
     @Override
-    public List<contacto> buscarContactoPorEmail(String email) {
-        return cercarContactesPerCamp("email", email);
+    public List<Contacto> buscarContactoPorEmail(String email) {
+        return buscarContactosPorCampo("email", email);
     }
 
-    // Método auxiliar para búsquedas genéricas
-    private List<contacto> cercarContactesPerCamp(String camp, String valor) {
-        CriteriaQuery<contacto> cr = this.criteriaBuilder.createQuery(contacto.class);
-        Root<contacto> root = cr.from(contacto.class);
+    private List<Contacto> buscarContactosPorCampo(String campo, String valor) {
+        CriteriaQuery<Contacto> cr = this.criteriaBuilder.createQuery(Contacto.class);
+        Root<Contacto> root = cr.from(Contacto.class);
 
-        CriteriaQuery<contacto> query;
+        CriteriaQuery<Contacto> query;
 
-        if (camp.equals("telefono")) {
-            // Comparación exacta para teléfono (como número)
+        if (campo.equals("telefono")) {
             query = cr.select(root).where(
-                    this.criteriaBuilder.equal(root.get(camp), Integer.parseInt(valor))
+                    this.criteriaBuilder.equal(root.get(campo), Integer.parseInt(valor))
             );
         } else {
-            // Búsqueda con LIKE para campos de texto (nombre, apellido, email)
             query = cr.select(root).where(
                     this.criteriaBuilder.like(
-                            this.criteriaBuilder.lower(root.get(camp).as(String.class)),
+                            this.criteriaBuilder.lower(root.get(campo).as(String.class)),
                             "%" + valor.toLowerCase() + "%"
                     )
             );
@@ -113,14 +110,10 @@ public class DataBaseController implements controlador, AutoCloseable {
         return this.session.createQuery(query).getResultList();
     }
 
-
-    // (Opcional) Para obtener todos los contactos
-    public List<contacto> getContactes() {
-        CriteriaQuery<contacto> cr = this.criteriaBuilder.createQuery(contacto.class);
-        Root<contacto> root = cr.from(contacto.class);
-        CriteriaQuery<contacto> query = cr.select(root);
+    public List<Contacto> getContactos() {
+        CriteriaQuery<Contacto> cr = this.criteriaBuilder.createQuery(Contacto.class);
+        Root<Contacto> root = cr.from(Contacto.class);
+        CriteriaQuery<Contacto> query = cr.select(root);
         return this.session.createQuery(query).getResultList();
     }
 }
-
-
