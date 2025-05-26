@@ -1,98 +1,168 @@
+// Sources:
+//  https://www.geeksforgeeks.org/introduction-to-java-swing/
+//  https://docs.oracle.com/javase/tutorial/uiswing/components/menu.html
+//  https://docs.oracle.com/javase/tutorial/uiswing/components/table.html
+
+
+
+
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import backend.Contacte;
-import backend.Controlador;
+import javax.swing.table.TableModel;
 
-public class GUI extends JFrame {
-    private JTable table;
-    private DefaultTableModel model;
-    private Controlador controlador;
+import static javax.swing.JOptionPane.showMessageDialog;
 
-    public GUI(Controlador controlador) {
-        this.controlador = controlador;
-        setTitle("Gestor de Contactos");
-        setSize(800, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+public class GUI {
+    private final DataBaseController ctrl;
+    private final JTable table;
+    private final DefaultTableModel model;
 
-        model = new DefaultTableModel(new String[]{"ID", "Nombre", "Apellidos", "Teléfono", "Email"}, 0);
-        table = new JTable(model);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+    public GUI(){
+        this.ctrl = new DataBaseController();
+        this.model = new DefaultTableModel();
+        this.table = new JTable(model);
 
-        JPanel panel = new JPanel();
-        JButton addBtn = new JButton("Añadir");
-        JButton deleteBtn = new JButton("Eliminar");
-        JButton updateBtn = new JButton("Actualizar");
-        JButton searchBtn = new JButton("Buscar");
+        JFrame frame = new JFrame("Agenda");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLayout(null);
 
-        panel.add(addBtn);
-        panel.add(deleteBtn);
-        panel.add(updateBtn);
-        panel.add(searchBtn);
-        add(panel, BorderLayout.SOUTH);
-
-        addBtn.addActionListener(e -> showAddDialog());
-        deleteBtn.addActionListener(e -> deleteSelectedContact());
-        updateBtn.addActionListener(e -> showUpdateDialog());
-        searchBtn.addActionListener(e -> searchContact());
-
-        refreshTable();
+        setupMenu(frame);
+        setupGrid(frame);
+        frame.setVisible(true);
     }
 
-    private void refreshTable() {
-        model.setRowCount(0);
-        List<Contacto> contacts = controlador.getContactes();
-        for (Contacte c : contacts) {
-            model.addRow(new Object[]{c.getId(), c.getNom(), c.getCognoms(), c.getTelefon(), c.getEmail()});
-        }
+    private void setupMenu(JFrame frame){
+        JMenuBar menuBar = new JMenuBar();
+        frame.setJMenuBar(menuBar);
+
+        JMenu fileMenu = menuBar.add(new JMenu("File"));
+        fileMenu.add(new JMenuItem("New Contact")).addActionListener(e -> createContact());
+
+        fileMenu.add(new JMenuItem("Exit")).addActionListener(e -> System.exit(0));
+
+        JMenu searchMenu = menuBar.add(new JMenu("Search"));
+        searchMenu.add(new JMenuItem("Search all")).addActionListener(e -> searchAll());
+
+        JMenuItem sByOption = searchMenu.add(new JMenu("Search by"));
+        ((JMenuItem) sByOption.add(new JMenuItem("Search by ID"))).addActionListener(e -> searchModalPopup(frame, "id"));
+        ((JMenuItem) sByOption.add(new JMenuItem("Search by name"))).addActionListener(e -> searchModalPopup(frame, "name"));
+        ((JMenuItem) sByOption.add(new JMenuItem("Search by surnames"))).addActionListener(e -> searchModalPopup(frame, "surnames"));
+        ((JMenuItem) sByOption.add(new JMenuItem("Search by phone"))).addActionListener(e -> searchModalPopup(frame, "phone"));//Afegeix la cerca per teléfon
+        ((JMenuItem) sByOption.add(new JMenuItem("Search by email"))).addActionListener(e -> searchModalPopup(frame, "email"));//Afegeix la cerca per email
     }
 
-    private void showAddDialog() {
-        ContacteForm form = new ContacteForm(this, "Añadir Contacto");
-        form.setOnSave((nom, cognoms, telefon, email) -> {
-            controlador.nouContacte(nom, cognoms, Integer.parseInt(telefon), email);
-            refreshTable();
+    private void searchModalPopup(JFrame frame, String field){
+        String value = (String)JOptionPane.showInputDialog(
+                frame,
+                "Select a " + field + ":",
+                "Search by " + field,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                ""
+        );
+
+        searchContactByField(field, value);
+    }
+
+    private void setupGrid(JFrame frame){
+        this.model.addColumn("ID");
+        this.model.addColumn("Name");
+        this.model.addColumn("Surnames");
+        this.model.addColumn("Phone");
+        this.model.addColumn("Email");
+
+        JScrollPane scrollPane = new JScrollPane(this.table);
+        scrollPane.setSize(frame.getSize());
+        frame.add(scrollPane);
+
+        JPopupMenu contextMenu = new JPopupMenu();
+        this.table.setComponentPopupMenu(contextMenu);
+        this.table.setFillsViewportHeight(true);
+
+        contextMenu.add(new JMenuItem("Delete")).addActionListener( e -> deleteContact());
+
+        table.addPropertyChangeListener("tableCellEditor", e -> {
+            if(!table.isEditing()){
+               updateContact();
+            }
         });
-        form.setVisible(true);
+
+        //Loading all data.
+        searchAll();
     }
 
-    private void deleteSelectedContact() {
-        int row = table.getSelectedRow();
-        if (row >= 0) {
-            int id = (int) model.getValueAt(row, 0);
-            controlador.eliminarContacte(id);
-            refreshTable();
+    private void createContact(){
+        addRow(this.ctrl.nuevoContacto("", "", Integer.parseInt(""), ""));
+    }
+
+    private void updateContact(){
+        int r = table.getSelectedRow();
+        TableModel t = table.getModel();
+
+        int id = (int) t.getValueAt(r, 0);
+        String nombre = (String) t.getValueAt(r, 1);
+        String apellidos = (String) t.getValueAt(r, 2);
+        int telefono = (int) t.getValueAt(r, 3);
+        String email = (String) t.getValueAt(r, 4);
+
+        this.ctrl.actualizarContacto(id, nombre, apellidos, telefono, email);
+    }
+
+    private void deleteContact(){
+        int[] sr = this.table.getSelectedRows();
+        if(sr.length == 0) showMessageDialog(null, "No row selected.");
+        else{
+            for(int i : sr){
+                int id = (int) this.table.getModel().getValueAt(i, 0);
+                this.ctrl.borrarContacto(id);
+            }
+            removeRows(sr);
         }
     }
 
-    private void showUpdateDialog() {
-        int row = table.getSelectedRow();
-        if (row >= 0) {
-            int id = (int) model.getValueAt(row, 0);
-            String nom = (String) model.getValueAt(row, 1);
-            String cognoms = (String) model.getValueAt(row, 2);
-            String telefon = model.getValueAt(row, 3).toString();
-            String email = (String) model.getValueAt(row, 4);
+    private void searchAll(){
+        this.model.setRowCount(0);
 
-            ContacteForm form = new ContacteForm(this, "Actualizar Contacto", nom, cognoms, telefon, email);
-            form.setOnSave((n, c, t, e) -> {
-                controlador.actualitzarContacte(id, n, c, Integer.parseInt(t), e);
-                refreshTable();
-            });
-            form.setVisible(true);
+        List<Contacto> cs = this.ctrl.getContactos();
+        cs.forEach(this::addRow);
+    }
+
+    private void searchContactByField(String field, String value){
+        this.model.setRowCount(0);
+
+        if(field.equals("id")) addRow(this.ctrl.buscarContactoPorId(Integer.parseInt(value)));
+        else {
+            List<Contacto> cs = switch (field) {
+                case "nombre" -> this.ctrl.buscarContactoPorNombre(value);
+                case "apellidos" -> this.ctrl.buscarContactoPorApellido(value);
+                case "telefono" -> this.ctrl.buscarContactoPorTelefono(Integer.parseInt(value));//Afegeix la cerca per teléfon
+                case "email" -> this.ctrl.buscarContactoPorEmail(value);//Afegeix la cerca per email
+                default -> null;
+            };
+
+
+            if (cs != null) cs.forEach(this::addRow);
         }
     }
 
-    private void searchContact() {
-        String field = JOptionPane.showInputDialog(this, "Campo (nom, cognoms, telefon, email):");
-        String value = JOptionPane.showInputDialog(this, "Valor:");
-        List<Contacte> results = controlador.getContactesPerCamp(field, value);
-        model.setRowCount(0);
-        for (Contacte c : results) {
-            model.addRow(new Object[]{c.getId(), c.getNom(), c.getCognoms(), c.getTelefon(), c.getEmail()});
+
+
+    private void addRow(Contacto c){
+        this.model.addRow(new Object[]{c.getId(), c.getNombre(), c.getApellido(), c.getTelefono(), c.getEmail()});
+    }
+
+    private void removeRows(int[] rows){
+        Arrays.sort(rows);
+
+        for (int i = 0; i < rows.length; i++) {
+            this.model.removeRow(rows[i]);
+            for (int j = 0; j < rows.length; j++) {
+                rows[j]--;
+            }
         }
     }
 }
