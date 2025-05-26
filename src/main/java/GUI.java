@@ -15,6 +15,7 @@ import javax.swing.table.TableModel;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class GUI {
+
     private final DataBaseController ctrl;
     private final JTable table;
     private final DefaultTableModel model;
