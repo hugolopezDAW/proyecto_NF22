@@ -25,12 +25,13 @@ public class TUITest {
 
     @Test
     public void testPedirDatosNuevoContacto() {
-        String input = "\nJuan\nPerez\n123456789\njuan@mail.com\n";
+        String input = "Juan\nPerez\n123456789\njuan@mail.com\n";
         TUI tui = new TUI(new ByteArrayInputStream(input.getBytes()));
 
         String[] datos = tui.pedirDatosNuevoContacto();
         assertArrayEquals(new String[] {"Juan", "Perez", "123456789", "juan@mail.com"}, datos);
     }
+
 
     @Test
     public void testPedirDatosActualizarContacto() {
@@ -50,4 +51,21 @@ public class TUITest {
         int id = tui.pedirIdBorrarContacto();
         assertEquals(7, id);
     }
+    @Test
+    public void testMostrarLineaConArrayDeObjetos() {
+        TUI tui = new TUI(System.in);
+        Object[] datos = new Object[] {"Uno", "Dos", "Tres"};
+
+
+        assertDoesNotThrow(() -> tui.mostrarLinea(datos));
+    }
+    @Test
+    public void testMostrarLineaConObjetoUnico() {
+        TUI tui = new TUI(System.in);
+        Object dato = "Texto de prueba";
+
+        assertDoesNotThrow(() -> tui.mostrarLinea(dato));
+    }
+
+
 }
