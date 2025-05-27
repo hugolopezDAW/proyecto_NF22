@@ -1,11 +1,11 @@
-public class Main {
-    public static void main(String[] args) {
-        new GUI();
-    }
-}
+//public class Main {
+//    public static void main(String[] args) {
+//        new GUI();
+//    }
+//}
 
 
-/*import java.util.Scanner;
+import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -77,4 +77,4 @@ public class Main {
             System.out.println("Ha ocurrido un error al actualizar el contacto.");
         }
     }
-}*/
+}
