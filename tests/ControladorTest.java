@@ -14,6 +14,8 @@ public class ControladorTest {
         assertEquals(1, nuevo.getId());
         assertEquals("Juan", nuevo.getNombre());
         assertEquals("Perez", nuevo.getApellido());
+        assertEquals("123456789", nuevo.getTelefono());
+        assertEquals("juan@mail.com", nuevo.getEmail());
     }
 
     @Test
